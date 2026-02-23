@@ -8,7 +8,7 @@ import AllBook from "./Pages/AllBook"
 import MyBook from "./Pages/MyBook"
 import AddBook from "./Pages/AddBook"
 import Profile from "./Pages/Profile"
-import "./App.css"
+import "./App1.css"
 function App() {
 
   const router = createBrowserRouter([

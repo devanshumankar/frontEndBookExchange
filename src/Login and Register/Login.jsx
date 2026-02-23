@@ -16,14 +16,14 @@ const Login = () => {
     const [errorSignUp, setErrorSignUp] = useState("");
 
     const navigate = useNavigate();
-    const API_URL = import.meta.env.VITE_API_URL; // backend URL
+    const API_URL = import.meta.env.VITE_API_URL; 
 
-    // ---- SIGN UP ----
+    
     const handleSignUp = async (e) => {
         e.preventDefault();
         setErrorSignUp("");
 
-        // --- Validation ---
+        
         if (!userName || !email || !phone || !password) {
             return setErrorSignUp("All fields are required!");
         }
@@ -32,11 +32,11 @@ const Login = () => {
         }
 
         try {
-            // Firebase Auth
+            
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             const uid = userCred.user.uid;
 
-            // Backend registration
+           
             const res = await fetch(`${API_URL}/api/user/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ const Login = () => {
 
             setErrorSignUp("Registration successful! Please login.");
 
-            // Clear inputs
+            
             setUserName(""); setEmail(""); setPhone(""); setPassword("");
 
         } catch (err) {
@@ -62,7 +62,7 @@ const Login = () => {
         }
     };
 
-    // ---- LOGIN ----
+    
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorLogin("");
@@ -80,7 +80,7 @@ const Login = () => {
 
             if (!userData.isVerified) return setErrorLogin("Account not verified. Contact admin.");
 
-            // Navigate based on role
+            
             if (userData.role === "admin") navigate("/admin");
             else navigate("/home");
 
