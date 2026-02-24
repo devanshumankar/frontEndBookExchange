@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from "../firebase/firebase";
 
-const SingleBook = ({ book, userBooks = [] }) => {
+const SingleBook = ({ book, userBooks = [], onExchange }) => {
+    const [isRequesting, setIsRequesting] = useState(false);
     const [selectedBook, setSelectedBook] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
 
@@ -20,6 +21,7 @@ const SingleBook = ({ book, userBooks = [] }) => {
         if (!currentUser) return alert("You must be logged in to request a book");
         if (!selectedBook) return;
 
+        setIsRequesting(true);
         try {
             const response = await fetch(`${API_URL}/api/requests`, {
                 method: "POST",
@@ -37,12 +39,15 @@ const SingleBook = ({ book, userBooks = [] }) => {
             if (response.ok) {
                 alert("Exchange request sent!");
                 setSelectedBook("");
+                if (onExchange) onExchange();
             } else {
                 alert(data.message || "Failed to send request");
             }
         } catch (error) {
             console.error(error);
             alert("Something went wrong!");
+        } finally {
+            setIsRequesting(false);
         }
     };
 
@@ -70,8 +75,8 @@ const SingleBook = ({ book, userBooks = [] }) => {
                 </select>
 
                 {selectedBook && (
-                    <button onClick={handleExchange} style={{ marginLeft: '30px', cursor: 'pointer' }}>
-                        Request Exchange
+                    <button onClick={handleExchange} disabled={isRequesting}>
+                        {isRequesting ? 'Requesting...' : 'Request Exchange'}
                     </button>
                 )}
             </div>

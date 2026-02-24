@@ -7,19 +7,19 @@ const RequestBook = () => {
 
     const API_URL = import.meta.env.VITE_API_URL; // <-- environment variable
 
-    useEffect(() => {
-        const fetchPendingRequests = async () => {
-            try {
-                const response = await fetch(`${API_URL}/api/requests/pending`);
-                const data = await response.json();
-                setPendingRequests(data);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching pending requests:", error);
-                setLoading(false);
-            }
-        };
+    const fetchPendingRequests = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/requests/pending`);
+            const data = await response.json();
+            setPendingRequests(data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching pending requests:", error);
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchPendingRequests();
     }, [API_URL]);
 
@@ -35,7 +35,11 @@ const RequestBook = () => {
                     <p>No pending requests.</p>
                 ) : (
                     pendingRequests.map((request) => (
-                        <RequestCard key={request._id} request={request} />
+                        <RequestCard
+                            key={request._id}
+                            request={request}
+                            onAction={fetchPendingRequests}
+                        />
                     ))
                 )}
             </div>

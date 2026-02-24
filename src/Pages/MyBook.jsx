@@ -11,16 +11,24 @@ const MyBook = () => {
 
   useEffect(() => {
     const fetchBooks = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
       try {
-        const uid = auth.currentUser.uid;
-        const res = await fetch(`${API_URL}/api/books/user/${uid}`);
+        const res = await fetch(`${API_URL}/api/books/user/${user.uid}`);
         const data = await res.json();
         setBooks(data.filter(book => book.status === "available"));
       } catch (err) {
         console.error("Failed to fetch books:", err);
       }
     };
-    fetchBooks();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) fetchBooks();
+      else setBooks([]);
+    });
+
+    return () => unsubscribe();
   }, [API_URL]);
 
   const handleDelete = async (bookId) => {

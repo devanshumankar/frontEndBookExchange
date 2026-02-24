@@ -8,6 +8,7 @@ const AddBook = () => {
   const [condition, setCondition] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL; // <-- environment variable
 
@@ -29,12 +30,20 @@ const AddBook = () => {
       return setError("Please fill all required fields");
     }
 
+    setIsSubmitting(true);
     try {
       const ownerUid = auth.currentUser?.uid;
-      if (!ownerUid) return setError("User not logged in");
+      if (!ownerUid) {
+        setIsSubmitting(false);
+        return setError("User not logged in");
+      }
 
       let imageDataUrl = "";
       if (image) {
+        if (image.size > 2 * 1024 * 1024) {
+          setIsSubmitting(false);
+          return setError("Image too large. Please select a file under 2MB");
+        }
         imageDataUrl = await convertToDataUrl(image);
       }
 
@@ -56,6 +65,7 @@ const AddBook = () => {
       const data = await res.json();
 
       if (!res.ok) {
+        setIsSubmitting(false);
         return setError(data.error || "Server error");
       }
 
@@ -64,10 +74,13 @@ const AddBook = () => {
       setAuthor("");
       setCondition("");
       setImage(null);
+      setTimeout(() => setSuccess(""), 3000);
 
     } catch (err) {
       console.log(err);
       setError("Something went wrong. Please try again later");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,7 +115,9 @@ const AddBook = () => {
         {success && <p className='success'>{success}</p>}
 
         <div className="add-book">
-          <button type='submit'>Add Book</button>
+          <button type='submit' disabled={isSubmitting}>
+            {isSubmitting ? 'Adding...' : 'Add Book'}
+          </button>
         </div>
       </form>
     </div>

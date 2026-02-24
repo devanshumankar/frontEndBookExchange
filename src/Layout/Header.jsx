@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const [searchFilter, setSearchFilter] = useState("");
     const navigate = useNavigate();
 
-    const handleSearch = () => {
+    useEffect(() => {
         const query = searchFilter.trim();
-        if (!query) return;
 
-        navigate(`/home/allbook?search=${encodeURIComponent(query)}`);
-    };
+        const timer = setTimeout(() => {
+            if (query) {
+                navigate(`/home/allbook?search=${encodeURIComponent(query)}`);
+            } else if (searchFilter !== "") {
+                // If the user cleared the search bar, show all books
+                navigate(`/home/allbook`);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchFilter, navigate]);
 
     return (
         <div className='header'>
@@ -21,19 +29,10 @@ const Header = () => {
                 <div className="search">
                     <input
                         type='text'
-                        placeholder='Enter book name'
+                        placeholder='Search books...'
                         value={searchFilter}
                         onChange={(e) => setSearchFilter(e.target.value)}
                     />
-                    <button onClick={handleSearch}>
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="blue"
-                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
                 </div>
 
                 <div className="my-requests hb">
