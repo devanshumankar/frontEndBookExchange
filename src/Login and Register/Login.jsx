@@ -16,14 +16,14 @@ const Login = () => {
     const [errorSignUp, setErrorSignUp] = useState("");
 
     const navigate = useNavigate();
-    const API_URL = import.meta.env.VITE_API_URL; 
+    const API_URL = import.meta.env.VITE_API_URL;
 
-    
+
     const handleSignUp = async (e) => {
         e.preventDefault();
         setErrorSignUp("");
 
-        
+
         if (!userName || !email || !phone || !password) {
             return setErrorSignUp("All fields are required!");
         }
@@ -32,11 +32,11 @@ const Login = () => {
         }
 
         try {
-            
+
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             const uid = userCred.user.uid;
 
-           
+
             const res = await fetch(`${API_URL}/api/user/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ const Login = () => {
 
             setErrorSignUp("Registration successful! Please login.");
 
-            
+
             setUserName(""); setEmail(""); setPhone(""); setPassword("");
 
         } catch (err) {
@@ -62,7 +62,7 @@ const Login = () => {
         }
     };
 
-    
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorLogin("");
@@ -80,7 +80,7 @@ const Login = () => {
 
             if (!userData.isVerified) return setErrorLogin("Account not verified. Contact admin.");
 
-            
+
             if (userData.role === "admin") navigate("/admin");
             else navigate("/home");
 
@@ -104,6 +104,9 @@ const Login = () => {
                     <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
                     <div className="error-box">{errorSignUp}</div>
                     <button type="submit">Sign up</button>
+                    <p style={{ textAlign: "center", color: "#ddd", fontSize: "0.85rem", marginTop: "10px", cursor: "pointer" }}>
+                        Already have an account? <label htmlFor="chk" style={{ display: "inline", fontSize: "0.85rem", color: "#a855f7", textDecoration: "underline", marginLeft: "5px", marginTop: "0" }}>Login</label>
+                    </p>
                 </form>
             </div>
 
@@ -114,6 +117,9 @@ const Login = () => {
                     <input type="password" placeholder="Password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} />
                     <div className="error-box">{errorLogin}</div>
                     <button type="submit">Login</button>
+                    <p style={{ textAlign: "center", color: "#666", fontSize: "0.85rem", marginTop: "10px", cursor: "pointer" }}>
+                        Don't have an account? <label htmlFor="chk" style={{ display: "inline", fontSize: "0.85rem", color: "#573b8a", textDecoration: "underline", marginLeft: "5px", marginTop: "0" }}>Sign up</label>
+                    </p>
                 </form>
             </div>
         </div>
